@@ -1,0 +1,288 @@
+﻿# Re-run of live-marked tests only (pytest -m live -v tests/), after 2 live tests failed with HTTP 400 in tests.txt
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- C:\ev\policy\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\soura\Downloads\Agent Evaluation and Observability with Claude\Build a Validated, Routed Insurance Policy Extraction Pipeline\04-hitl-routing\solution
+configfile: pyproject.toml
+plugins: anyio-4.15.1, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 48 items / 45 deselected / 3 selected
+
+tests/test_us01_retry.py::test_live_extracts_well_formed_policy FAILED   [ 33%]
+tests/test_us02_batch.py::test_live_dry_run_sample_against_real_api FAILED [ 66%]
+tests/test_us03_review.py::test_live_reviewer_returns_per_field_judgement PASSED [100%]
+
+================================== FAILURES ===================================
+____________________ test_live_extracts_well_formed_policy ____________________
+
+    @pytest.mark.skipif(
+        not os.environ.get("ANTHROPIC_API_KEY"),
+        reason="ANTHROPIC_API_KEY not set; skipping live API test",
+    )
+    @pytest.mark.live
+    def test_live_extracts_well_formed_policy() -> None:
+        """End-to-end against real API on a well-formed clean policy."""
+        from anthropic import Anthropic
+    
+        from policy_extractor.client import AnthropicMessagesClient
+    
+        client = AnthropicMessagesClient(Anthropic())
+>       result = extract_with_retry(
+            client=client,
+            policy_id="POL-2025-001",
+            document_text=load_policy_text("POL-2025-001"),
+            max_retries=3,
+        )
+
+tests\test_us01_retry.py:505: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+policy_extractor\retry.py:48: in extract_with_retry
+    response = client.create(
+policy_extractor\client.py:27: in create
+    result: Message = self._client.messages.create(**kwargs)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\ev\policy\Lib\site-packages\anthropic\_utils\_utils.py:294: in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+C:\ev\policy\Lib\site-packages\anthropic\resources\messages\messages.py:997: in create
+    return self._post(
+C:\ev\policy\Lib\site-packages\anthropic\_base_client.py:1543: in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <anthropic.Anthropic object at 0x000001E1E6308FD0>
+cast_to = <class 'anthropic.types.message.Message'>
+options = FinalRequestOptions(method='post', url='/v1/messages', params={}, headers={'anthropic-user-profile-id': <anthropic.Omi...e', 'premium_amount', 'deductible', 'coverage_limit', 'endorsements', 'exclusions', 'confidence']}}]}, extra_json=None)
+stream = False
+stream_cls = anthropic.Stream[typing.Annotated[typing.Union[anthropic.types.raw_message_start_event.RawMessageStartEvent, anthropic...ntBlockDeltaEvent, anthropic.types.raw_content_block_stop_event.RawContentBlockStopEvent], UnionDiscriminator('type')]]
+
+    def request(
+        self,
+        cast_to: Type[ResponseT],
+        options: FinalRequestOptions,
+        *,
+        stream: bool = False,
+        stream_cls: type[_StreamT] | None = None,
+    ) -> ResponseT | _StreamT:
+        cast_to = self._maybe_override_cast_to(cast_to, options)
+    
+        # create a copy of the options we were given so that if the
+        # options are mutated later & we then retry, the retries are
+        # given the original options
+        input_options = self._copy_and_prepare(options)
+        if input_options.idempotency_key is None and input_options.method.lower() != "get":
+            # ensure the idempotency key is reused between requests
+            input_options.idempotency_key = self._idempotency_key()
+    
+        chain = self._middleware_chain
+        max_retries = input_options.get_max_retries(self.max_retries)
+    
+        for retries_taken in range(max_retries + 1):
+            remaining_retries = max_retries - retries_taken
+    
+            try:
+                if chain is None:
+                    response, prepared = self._attempt_request(
+                        model_copy(input_options), stream=stream, retries_taken=retries_taken
+                    )
+                    if response.is_success:
+                        return self._process_response(
+                            cast_to=cast_to,
+                            options=prepared,
+                            response=response,
+                            stream=stream,
+                            stream_cls=stream_cls,
+                            retries_taken=retries_taken,
+                        )
+                else:
+                    request = APIRequest(
+                        options=model_copy(input_options),
+                        cast_to=cast_to,
+                        stream=stream,
+                        stream_cls=stream_cls,
+                        retries_taken=retries_taken,
+                    )
+                    result: Any = chain(request)
+                    if not isinstance(result, BaseAPIResponse) or result.http_response.is_success:
+                        return cast(Union[ResponseT, _StreamT], self._finalize_middleware_result(result, request))
+                    response = result.http_response
+            except Exception as err:
+                should_retry, failed_response = self._should_retry_exception(err)
+                if remaining_retries <= 0 or not should_retry:
+                    raise
+    
+                if failed_response is not None and not failed_response.is_closed:
+                    failed_response.close()
+    
+                self._sleep_for_retry(
+                    retries_taken=retries_taken,
+                    max_retries=max_retries,
+                    options=input_options,
+                    response=failed_response,
+                )
+                continue
+    
+            # the attempt produced an error-status response — possibly inspected,
+            # replaced or passed through by middleware
+            if remaining_retries > 0 and self._should_retry(response):
+                if not response.is_closed:
+                    response.close()
+                self._sleep_for_retry(
+                    retries_taken=retries_taken,
+                    max_retries=max_retries,
+                    options=input_options,
+                    response=response,
+                )
+                continue
+    
+            # If the response is streamed then we need to explicitly read the response
+            # to completion before attempting to access the response text.
+            if not response.is_closed:
+                response.read()
+    
+>           raise self._make_status_error_from_response(response) from None
+E           anthropic.BadRequestError: Error code: 400 - {'error': {'code': None, 'message': "Model 'claude-haiku-4-5' is not available for your organization. The model may not be configured or enabled. Please contact your administrator.", 'param': None, 'type': 'invalid_request_error'}}
+
+C:\ev\policy\Lib\site-packages\anthropic\_base_client.py:1208: BadRequestError
+__________________ test_live_dry_run_sample_against_real_api __________________
+
+    @pytest.mark.skipif(
+        not os.environ.get("ANTHROPIC_API_KEY"),
+        reason="ANTHROPIC_API_KEY not set",
+    )
+    @pytest.mark.live
+    def test_live_dry_run_sample_against_real_api() -> None:
+        """End-to-end dry-run on two real policies. Verifies the real-time path works."""
+        from anthropic import Anthropic
+    
+        from policy_extractor.client import AnthropicMessagesClient
+    
+        client = AnthropicMessagesClient(Anthropic())
+>       sample = dry_run_sample(
+            extractor_client=client,
+            policies=[
+                ("POL-2025-001", load_policy_text("POL-2025-001")),
+                ("POL-2025-004", load_policy_text("POL-2025-004")),
+            ],
+            sample_size=2,
+        )
+
+tests\test_us02_batch.py:275: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+policy_extractor\batch.py:349: in dry_run_sample
+    extract_with_retry(
+policy_extractor\retry.py:48: in extract_with_retry
+    response = client.create(
+policy_extractor\client.py:27: in create
+    result: Message = self._client.messages.create(**kwargs)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\ev\policy\Lib\site-packages\anthropic\_utils\_utils.py:294: in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+C:\ev\policy\Lib\site-packages\anthropic\resources\messages\messages.py:997: in create
+    return self._post(
+C:\ev\policy\Lib\site-packages\anthropic\_base_client.py:1543: in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <anthropic.Anthropic object at 0x000001E1E6881B90>
+cast_to = <class 'anthropic.types.message.Message'>
+options = FinalRequestOptions(method='post', url='/v1/messages', params={}, headers={'anthropic-user-profile-id': <anthropic.Omi...e', 'premium_amount', 'deductible', 'coverage_limit', 'endorsements', 'exclusions', 'confidence']}}]}, extra_json=None)
+stream = False
+stream_cls = anthropic.Stream[typing.Annotated[typing.Union[anthropic.types.raw_message_start_event.RawMessageStartEvent, anthropic...ntBlockDeltaEvent, anthropic.types.raw_content_block_stop_event.RawContentBlockStopEvent], UnionDiscriminator('type')]]
+
+    def request(
+        self,
+        cast_to: Type[ResponseT],
+        options: FinalRequestOptions,
+        *,
+        stream: bool = False,
+        stream_cls: type[_StreamT] | None = None,
+    ) -> ResponseT | _StreamT:
+        cast_to = self._maybe_override_cast_to(cast_to, options)
+    
+        # create a copy of the options we were given so that if the
+        # options are mutated later & we then retry, the retries are
+        # given the original options
+        input_options = self._copy_and_prepare(options)
+        if input_options.idempotency_key is None and input_options.method.lower() != "get":
+            # ensure the idempotency key is reused between requests
+            input_options.idempotency_key = self._idempotency_key()
+    
+        chain = self._middleware_chain
+        max_retries = input_options.get_max_retries(self.max_retries)
+    
+        for retries_taken in range(max_retries + 1):
+            remaining_retries = max_retries - retries_taken
+    
+            try:
+                if chain is None:
+                    response, prepared = self._attempt_request(
+                        model_copy(input_options), stream=stream, retries_taken=retries_taken
+                    )
+                    if response.is_success:
+                        return self._process_response(
+                            cast_to=cast_to,
+                            options=prepared,
+                            response=response,
+                            stream=stream,
+                            stream_cls=stream_cls,
+                            retries_taken=retries_taken,
+                        )
+                else:
+                    request = APIRequest(
+                        options=model_copy(input_options),
+                        cast_to=cast_to,
+                        stream=stream,
+                        stream_cls=stream_cls,
+                        retries_taken=retries_taken,
+                    )
+                    result: Any = chain(request)
+                    if not isinstance(result, BaseAPIResponse) or result.http_response.is_success:
+                        return cast(Union[ResponseT, _StreamT], self._finalize_middleware_result(result, request))
+                    response = result.http_response
+            except Exception as err:
+                should_retry, failed_response = self._should_retry_exception(err)
+                if remaining_retries <= 0 or not should_retry:
+                    raise
+    
+                if failed_response is not None and not failed_response.is_closed:
+                    failed_response.close()
+    
+                self._sleep_for_retry(
+                    retries_taken=retries_taken,
+                    max_retries=max_retries,
+                    options=input_options,
+                    response=failed_response,
+                )
+                continue
+    
+            # the attempt produced an error-status response — possibly inspected,
+            # replaced or passed through by middleware
+            if remaining_retries > 0 and self._should_retry(response):
+                if not response.is_closed:
+                    response.close()
+                self._sleep_for_retry(
+                    retries_taken=retries_taken,
+                    max_retries=max_retries,
+                    options=input_options,
+                    response=response,
+                )
+                continue
+    
+            # If the response is streamed then we need to explicitly read the response
+            # to completion before attempting to access the response text.
+            if not response.is_closed:
+                response.read()
+    
+>           raise self._make_status_error_from_response(response) from None
+E           anthropic.BadRequestError: Error code: 400 - {'error': {'code': None, 'message': "Model 'claude-haiku-4-5' is not available for your organization. The model may not be configured or enabled. Please contact your administrator.", 'param': None, 'type': 'invalid_request_error'}}
+
+C:\ev\policy\Lib\site-packages\anthropic\_base_client.py:1208: BadRequestError
+=========================== short test summary info ===========================
+FAILED tests/test_us01_retry.py::test_live_extracts_well_formed_policy - anth...
+FAILED tests/test_us02_batch.py::test_live_dry_run_sample_against_real_api - ...
+================= 2 failed, 1 passed, 45 deselected in 13.90s =================
+[exit code: 1]

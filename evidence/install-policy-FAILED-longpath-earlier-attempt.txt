@@ -1,0 +1,50 @@
+Obtaining file:///c:/Users/soura/Downloads/Agent%20Evaluation%20and%20Observability%20with%20Claude/Build%20a%20Validated%2C%20Routed%20Insurance%20Policy%20Extraction%20Pipeline/04-hitl-routing/solution
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting anthropic==0.40.0
+  Using cached anthropic-0.40.0-py3-none-any.whl.metadata (23 kB)
+Requirement already satisfied: pytest>=8 in .\.venv\Lib\site-packages (from policy-extractor==0.2.0) (9.1.1)
+Requirement already satisfied: pytest-asyncio>=0.23 in .\.venv\Lib\site-packages (from policy-extractor==0.2.0) (1.4.0)
+Requirement already satisfied: mypy>=1.10 in .\.venv\Lib\site-packages (from policy-extractor==0.2.0) (2.3.1)
+Requirement already satisfied: ruff>=0.5 in .\.venv\Lib\site-packages (from policy-extractor==0.2.0) (0.16.9)
+Requirement already satisfied: anyio<5,>=3.5.0 in .\.venv\Lib\site-packages (from anthropic==0.40.0) (4.15.1)
+Requirement already satisfied: distro<2,>=1.7.0 in .\.venv\Lib\site-packages (from anthropic==0.40.0) (1.9.0)
+Requirement already satisfied: httpx<1,>=0.23.0 in .\.venv\Lib\site-packages (from anthropic==0.40.0) (0.28.1)
+Requirement already satisfied: jiter<1,>=0.4.0 in .\.venv\Lib\site-packages (from anthropic==0.40.0) (0.17.0)
+Requirement already satisfied: pydantic<3,>=1.9.0 in .\.venv\Lib\site-packages (from anthropic==0.40.0) (2.13.5)
+Requirement already satisfied: sniffio in .\.venv\Lib\site-packages (from anthropic==0.40.0) (1.3.1)
+Requirement already satisfied: typing-extensions<5,>=4.7 in .\.venv\Lib\site-packages (from anthropic==0.40.0) (4.16.0)
+Requirement already satisfied: idna>=2.8 in .\.venv\Lib\site-packages (from anyio<5,>=3.5.0->anthropic==0.40.0) (3.20)
+Requirement already satisfied: certifi in .\.venv\Lib\site-packages (from httpx<1,>=0.23.0->anthropic==0.40.0) (2026.7.22)
+Requirement already satisfied: httpcore==1.* in .\.venv\Lib\site-packages (from httpx<1,>=0.23.0->anthropic==0.40.0) (1.0.9)
+Requirement already satisfied: h11>=0.16 in .\.venv\Lib\site-packages (from httpcore==1.*->httpx<1,>=0.23.0->anthropic==0.40.0) (0.16.0)
+Requirement already satisfied: annotated-types>=0.6.0 in .\.venv\Lib\site-packages (from pydantic<3,>=1.9.0->anthropic==0.40.0) (0.8.0)
+Requirement already satisfied: pydantic-core==2.46.5 in .\.venv\Lib\site-packages (from pydantic<3,>=1.9.0->anthropic==0.40.0) (2.46.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in .\.venv\Lib\site-packages (from pydantic<3,>=1.9.0->anthropic==0.40.0) (0.4.4)
+Requirement already satisfied: mypy_extensions>=1.0.0 in .\.venv\Lib\site-packages (from mypy>=1.10->policy-extractor==0.2.0) (1.1.0)
+Requirement already satisfied: pathspec>=1.0.0 in .\.venv\Lib\site-packages (from mypy>=1.10->policy-extractor==0.2.0) (1.1.1)
+Requirement already satisfied: librt>=0.13.0 in .\.venv\Lib\site-packages (from mypy>=1.10->policy-extractor==0.2.0) (0.15.0)
+Requirement already satisfied: ast-serialize<1.0.0,>=0.6.0 in .\.venv\Lib\site-packages (from mypy>=1.10->policy-extractor==0.2.0) (0.11.2)
+Requirement already satisfied: colorama>=0.4 in .\.venv\Lib\site-packages (from pytest>=8->policy-extractor==0.2.0) (0.4.6)
+Requirement already satisfied: iniconfig>=1.0.1 in .\.venv\Lib\site-packages (from pytest>=8->policy-extractor==0.2.0) (2.3.0)
+Requirement already satisfied: packaging>=22 in .\.venv\Lib\site-packages (from pytest>=8->policy-extractor==0.2.0) (26.3)
+Requirement already satisfied: pluggy<2,>=1.5 in .\.venv\Lib\site-packages (from pytest>=8->policy-extractor==0.2.0) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in .\.venv\Lib\site-packages (from pytest>=8->policy-extractor==0.2.0) (2.21.0)
+Using cached anthropic-0.40.0-py3-none-any.whl (199 kB)
+Building wheels for collected packages: policy-extractor
+  Building editable for policy-extractor (pyproject.toml): started
+  Building editable for policy-extractor (pyproject.toml): finished with status 'done'
+  Created wheel for policy-extractor: filename=policy_extractor-0.2.0-0.editable-py3-none-any.whl size=3324 sha256=f36cc987859c07ffe7453028f3b77e66b6df4a8d16c57df9b3bf1587cb7d0b56
+  Stored in directory: C:\Users\soura\AppData\Local\Temp\pip-ephem-wheel-cache-1peuo8ja\wheels\75\51\0d\f9d68d1f62c208944db618872a0d94f5d4b4df0b7fb16d67b0
+Successfully built policy-extractor
+Installing collected packages: anthropic, policy-extractor
+
+ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory: 'c:\\Users\\soura\\Downloads\\Agent Evaluation and Observability with Claude\\Build a Validated, Routed Insurance Policy Extraction Pipeline\\04-hitl-routing\\solution\\.venv\\Lib\\site-packages\\anthropic\\types\\beta\\prompt_caching\\prompt_caching_beta_cache_control_ephemeral_param.py'
+HINT: This error might have occurred since this system does not have Windows Long Path support enabled. You can find information on how to enable this at https://pip.pypa.io/warnings/enable-long-paths
+

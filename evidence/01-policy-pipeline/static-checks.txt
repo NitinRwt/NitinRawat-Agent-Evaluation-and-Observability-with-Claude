@@ -1,0 +1,7 @@
+﻿=== mypy ===
+Success: no issues found in 11 source files
+[exit code: 0]
+
+=== ruff ===
+All checks passed!
+[exit code: 0]

@@ -1,0 +1,32 @@
+﻿
+InputObject                                                            SideIndicator
+-----------                                                            -------------
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1188.12it/s]   =>           
+> Sources unavailable: logistics unavailable (timeout)                 =>           
+### average_lead_time_days  _[single source only]_                     =>           
+### on_time_delivery_rate  _[single source only]_                      =>           
+_none_                                                                 =>           
+### late_shipment_count  _[missing source: timeout reading logistics]_ =>           
+- missing source: timeout reading logistics                            =>           
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1133.83it/s]   <=           
+### average_lead_time_days  _[corroborated across 2 sources]_          <=           
+    - 12.0 days — logistics (as of 2026-04-05)                         <=           
+| Metric | Value | As of | Source |                                    <=           
+| --- | --- | --- | --- |                                              <=           
+| average_lead_time_days | 12.0 days | 2026-04-05 | logistics |        <=           
+### late_shipment_count  _[single source only]_                        <=           
+    - 11.0 shipments — logistics (as of 2026-04-05)                    <=           
+| Metric | Value | As of | Source |                                    <=           
+| --- | --- | --- | --- |                                              <=           
+| late_shipment_count | 11.0 shipments | 2026-04-05 | logistics |      <=           
+### on_time_delivery_rate  _[2 sources, conflicting]_  ⚠️ ESCALATE     <=           
+- escalation: high-impact metric is contested across sources           <=           
+- Reported values by source:                                           <=           
+    - 78.0 percent — logistics (as of 2026-04-05)                      <=           
+| Metric | Value | As of | Source |                                    <=           
+| --- | --- | --- | --- |                                              <=           
+| on_time_delivery_rate | 78.0 percent | 2026-04-05 | logistics |      <=           
+                                                                       <=           
+                                                                       <=           
+
+

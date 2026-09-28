@@ -1,0 +1,19 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- C:\ev\mortgage\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\soura\Downloads\Agent Evaluation and Observability with Claude\Build a Resilient Mortgage Document Extraction System\04-validate-mathematical-consistency\solution
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... collected 8 items
+
+tests/test_us04_validator.py::test_ac_04_01_extraction_carries_both_calculated_and_stated PASSED [ 12%]
+tests/test_us04_validator.py::test_ac_04_02_consistent_when_within_tolerance PASSED [ 25%]
+tests/test_us04_validator.py::test_ac_04_02_inconsistent_when_beyond_tolerance PASSED [ 37%]
+tests/test_us04_validator.py::test_ac_04_02_default_tolerance_is_one_dollar PASSED [ 50%]
+tests/test_us04_validator.py::test_ac_04_03_discrepancy_carries_field_calc_stated_delta PASSED [ 62%]
+tests/test_us04_validator.py::test_ac_04_04_real_paystub_with_sum_mismatch_is_flagged PASSED [ 75%]
+tests/test_us04_validator.py::test_clean_extraction_yields_consistent_true PASSED [ 87%]
+tests/test_us04_validator.py::test_validation_report_round_trips_through_json PASSED [100%]
+
+============================== 8 passed in 2.61s ==============================
+[exit code: 0]
