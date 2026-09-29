@@ -8,7 +8,8 @@ It won't auto-approve an extraction unless three independent signals all agree: 
 
 ## 2. Evidence
 
-- `tests.txt`: `2 failed, 46 passed in 13.96s`. Both failures are `live` tests that got `Model 'claude-haiku-4-5' is not available for your organization` from the Vocareum proxy. The same live test passed in `perturb_retry_tests.txt` (`test_live_extracts_well_formed_policy PASSED`), and `tests_live_rerun.txt` repeats the 400, so the proxy is intermittent. No offline test failed.
+- `tests.txt` (re-run 2026-09-29, no API key): `45 passed, 3 skipped`, exit code 0; mypy and ruff clean.
+- `tests_live_proxy_400_earlier.txt` (earlier run with the live key): `2 failed, 46 passed in 13.96s`. Both failures are `live` tests that got `Model 'claude-haiku-4-5' is not available for your organization` from the Vocareum proxy. The same live test passed in `perturb_retry_tests.txt` (`test_live_extracts_well_formed_policy PASSED`), and `tests_live_rerun.txt` repeats the 400, so the proxy is intermittent. No offline test failed.
 - `static-checks.txt`: mypy `Success: no issues found in 11 source files`; ruff `All checks passed!`
 - `pipeline_run.txt` (live, `--seed 42`): `"auto_approve": 0`, `"human_review": 9`, `"spot_check": 0`, `"escalations": 1`.
 - `routing_decisions.json`, POL-2025-002: every confidence ≥ 0.95, `"fields_below_threshold": []`, yet `"reason": "reviewer_disagreement=['coverage_limit', 'deductible']"`.

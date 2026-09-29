@@ -23,7 +23,7 @@
 
 | Evidence | Value |
 |---|---|
-| Passing test count | `2 failed, 46 passed` (`01-policy-pipeline/tests.txt`). Both failures are `live` tests hit by an intermittent proxy HTTP 400; see §1 notes in `SUMMARY.md` |
+| Passing test count | `45 passed, 3 skipped` (`01-policy-pipeline/tests.txt`; the 3 skipped are `live` tests, which need an API key). An earlier live-key run had 2 live tests fail on a proxy HTTP 400 (`tests_live_proxy_400_earlier.txt`); see `NOTES.md` §3 |
 | Routing output file | `01-policy-pipeline/routing_decisions.json` |
 | auto_approve / human_review / spot_check counts | 0 / 9 / 0 (`pipeline_run.txt`; plus `"escalations": 1`) |
 

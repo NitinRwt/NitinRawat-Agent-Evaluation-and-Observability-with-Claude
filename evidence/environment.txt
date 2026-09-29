@@ -1,0 +1,10 @@
+Python: Python 3.11.9
+  System 1 venv: C:\ev\policy   -> Python 3.11.9
+  System 2 venv: C:\ev\mortgage -> Python 3.11.9
+  System 3 venv: C:\ev\supply   -> Python 3.11.9
+OS: Microsoft Windows 11 Home Single Language (version 10.0.26200, build 26200, 64-bit)
+Shell: Windows PowerShell 5.1.26100.9444
+pytest: pytest 9.1.1
+mypy: mypy 2.3.1 (compiled: yes)
+ruff: ruff 0.16.9
+Captured: 2026-09-29 20:33

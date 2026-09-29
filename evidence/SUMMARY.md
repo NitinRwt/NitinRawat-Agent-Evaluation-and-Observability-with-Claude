@@ -4,7 +4,7 @@ Run date 2026-09-28 · Windows 11 · Python 3.11.9 · **Live API used** (Vocareu
 
 | System | Tests | mypy | ruff | Key run outcome | Perturbation |
 |---|---|---|---|---|---|
-| 1. Policy pipeline | `2 failed, 46 passed`. The 2 failures are `live` tests hit by an intermittent proxy HTTP 400 (the same test passed in `perturb_retry_tests.txt`); all offline tests pass. `routing_offline.txt`: `9 passed` | `Success: no issues found in 11 source files` | `All checks passed!` | Live pipeline: 0 auto_approve / 9 human_review / 0 spot_check, 1 escalation (POL-2025-009 `endorsements_absent`). Calibration: umbrella exclusions `conf=0.93 acc=0.00`, `OVERALL brier=0.291` | Blanked premium → `missing_source` / `premium_amount_absent` after 1 API call (baseline `1847.62`). 20 extra easy labels → `OVERALL brier=0.069`, umbrella cell unchanged |
+| 1. Policy pipeline | `45 passed, 3 skipped` (re-run 2026-09-29; the 3 `live` tests skip without an API key). The earlier live-key run hit a proxy HTTP 400 on 2 live tests (`tests_live_proxy_400_earlier.txt`). `routing_offline.txt`: `9 passed` | `Success: no issues found in 11 source files` | `All checks passed!` | Live pipeline: 0 auto_approve / 9 human_review / 0 spot_check, 1 escalation (POL-2025-009 `endorsements_absent`). Calibration: umbrella exclusions `conf=0.93 acc=0.00`, `OVERALL brier=0.291` | Blanked premium → `missing_source` / `premium_amount_absent` after 1 API call (baseline `1847.62`). 20 extra easy labels → `OVERALL brier=0.069`, umbrella cell unchanged |
 | 2. Mortgage extraction | `25 passed` (validator subset: `8 passed`) | `Success: no issues found in 11 source files` | `All checks passed!` | sqft `2400` (int); missing bonus `null`; sum mismatch flagged `"delta": -1250.0`, exit 1 | Stated total made to match (live record) → `"consistent": true`, `"discrepancies": []`, exit 0 |
 | 3. Supply chain | `34 passed, 2 warnings` | `Success: no issues found in 8 source files` | `All checks passed!` | 3 sections present; on-time conflict 95.0% (supplier_audit, 2026-04-10) vs 78.0% (logistics, 2026-04-05) under Contested | `--simulate-timeout`: run completes, logistics marked unavailable, `late_shipment_count` → Incomplete. **On-time conflict disappears** (moves to Well-Established, single source, 95%) |
 
@@ -12,6 +12,7 @@ Run date 2026-09-28 · Windows 11 · Python 3.11.9 · **Live API used** (Vocareu
 
 **Root (`evidence/`)**
 - `SUMMARY.md` — this file
+- `environment.txt` — Python, OS and tool versions
 - `NOTES.md` — environment, API path, problems and fixes
 - `reflection-brief.md` — completed course brief (fill in Name)
 - `perturbation-log.md` — completed course perturbation log
@@ -19,7 +20,7 @@ Run date 2026-09-28 · Windows 11 · Python 3.11.9 · **Live API used** (Vocareu
 - `install-policy-FAILED-longpath-earlier-attempt.txt` — earlier failed install (Windows MAX_PATH), kept as evidence for NOTES §1
 
 **`01-policy-pipeline/`**
-- `tests.txt`, `tests_live_rerun.txt`, `routing_offline.txt`, `perturb_retry_tests.txt`
+- `tests.txt`, `tests_live_proxy_400_earlier.txt`, `tests_live_rerun.txt`, `routing_offline.txt`, `perturb_retry_tests.txt`
 - `mypy.txt`, `ruff.txt`, `static-checks.txt`
 - `pipeline_run.txt`, `routing_decisions.json`
 - `calib.py`, `calibration.txt`, `calib_perturbed.py`, `calibration_perturbed.txt`
